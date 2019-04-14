@@ -1,16 +1,57 @@
-import { createAppContainer, createSwitchNavigator } from 'react-navigation';
+import {
+  createStackNavigator,
+  createAppContainer,
+  createSwitchNavigator
+} from 'react-navigation';
 import Canvas from './screens/Canvas';
 import FileManager from './screens/FileManager';
-import SignUp from './screens/SignedOut';
+import SignedOut from './screens/SignedOut';
+import Login from './screens/Login';
+import SignUp from './screens/SignUp';
+import AuthLoadingScreen from './screens/AuthLoadingScreen';
+
+const AuthStack = createStackNavigator(
+  {
+    SignedOut: {
+      screen: SignedOut,
+      navigationOptions: () => ({
+        headerStyle: {
+          backgroundColor: '#192338'
+        }
+      })
+    },
+    Login: {
+      screen: Login,
+      navigationOptions: () => ({
+        headerStyle: {
+          backgroundColor: '#192338'
+        }
+      })
+    },
+    SignUp: {
+      screen: SignUp,
+      navigationOptions: () => ({
+        headerStyle: {
+          backgroundColor: '#192338'
+        }
+      })
+    }
+  },
+  {
+    initialRouteName: 'SignedOut'
+  }
+);
 
 const RootNavigator = createAppContainer(
   createSwitchNavigator(
     {
+      Auth: AuthStack,
       Canvas,
-      FileManager
+      FileManager,
+      AuthLoading: AuthLoadingScreen
     },
     {
-      initialRouteName: 'FileManager'
+      initialRouteName: 'AuthLoading'
     }
   )
 );
