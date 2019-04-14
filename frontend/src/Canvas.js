@@ -2,7 +2,13 @@ import React, { Component } from 'react';
 import { StyleSheet, View, Text } from 'react-native';
 import { SketchCanvas } from '@terrylinla/react-native-sketch-canvas';
 import Toolbar from './Toolbar';
-import { subscribeToCanvas, addPathToCanvas, clearAll, undoPath } from './api';
+import {
+  subscribeToCanvas,
+  addPathToCanvas,
+  clearAll,
+  undoPath,
+  getCanvas
+} from './api';
 
 export default class Canvas extends Component {
   constructor(props) {
@@ -22,9 +28,16 @@ export default class Canvas extends Component {
   }
 
   componentDidMount() {
-    subscribeToCanvas(paths => {
-      paths.forEach(path => this.canvas.current.addPath(path));
+    const { current } = this.canvas;
+    getCanvas(paths => {
+      paths.forEach(path => current.addPath(path));
     });
+
+    subscribeToCanvas(
+      path => current.addPath(path),
+      id => current.deletePath(id),
+      () => current.clear()
+    );
   }
 
   render() {
