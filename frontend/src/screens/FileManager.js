@@ -99,6 +99,9 @@ export default class CanvasIndex extends React.Component {
           hintInput={'Paper Name'}
           submitInput={inputText => {
             removeCanvas(inputText);
+            getPapers(papers => {
+              this.setState({ papers });
+            });
             this.showDialog();
           }}
           closeDialog={() => {
@@ -110,7 +113,7 @@ export default class CanvasIndex extends React.Component {
           title={'Create/Join Paper'}
           hintInput={'Paper Name'}
           submitInput={inputText => {
-            this.sendInput(inputText);
+            this.addPaper(inputText);
             this.showDialog();
           }}
           closeDialog={() => {
