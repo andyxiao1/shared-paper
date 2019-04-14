@@ -7,7 +7,7 @@ export default class SignedOut extends React.Component {
     return (
       <View style={styles.container}>
         <View style={styles.header}>
-          <Text h3 style={styles.textStyle}>
+          <Text h2 style={styles.textStyle}>
             Shared Paper
           </Text>
         </View>
@@ -16,11 +16,13 @@ export default class SignedOut extends React.Component {
             raised
             onPress={() => this.props.navigation.navigate('SignUp')}
             title="Create an Account"
+            backgroundColor="#517fa4"
           />
           <Button
             raised
             onPress={() => this.props.navigation.navigate('Login')}
             title="I Have an Account"
+            backgroundColor="#517fa4"
           />
         </View>
       </View>
@@ -31,8 +33,7 @@ export default class SignedOut extends React.Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'white',
-    margin: '5%',
+    backgroundColor: '#192338',
     alignItems: 'center'
   },
   header: {
@@ -41,10 +42,11 @@ const styles = StyleSheet.create({
   },
   elementsContainer: {
     flex: 0.2,
-    justifyContent: 'space-around'
+    justifyContent: 'space-around',
+    margin: 50
   },
   textStyle: {
     textAlign: 'center',
-    color: 'gray'
+    color: 'white'
   }
 });

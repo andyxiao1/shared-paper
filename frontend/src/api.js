@@ -1,8 +1,17 @@
 import openSocket from 'socket.io-client';
 const socket = openSocket('http://10.104.86.58:3000/');
+// http://shared-paper.herokuapp.com
+
+const signUpDB = (username, password, cb) => {
+  socket.emit('users/signup', username, password, cb);
+};
+
+const loginDB = (username, password, cb) => {
+  socket.emit('users/login', username, password, cb);
+};
 
 const getPapers = cb => {
-  socket.emit('users/get_papers', 'andy', cb);
+  socket.emit('users/get_papers', cb);
 };
 
 const getCanvas = (name, cb) => {
@@ -38,5 +47,7 @@ export {
   undoPath,
   getCanvas,
   getPapers,
-  removeCanvas
+  removeCanvas,
+  signUpDB,
+  loginDB
 };

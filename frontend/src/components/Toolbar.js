@@ -34,7 +34,7 @@ export default class Toolbar extends Component {
             underlayColor={'#000080'}
           />
         </TouchableOpacity>
-        <TouchableOpacity style={{ padding: 20 }} onPress={back}>
+        <TouchableOpacity style={{ padding: 20 }} onPress={undo}>
           <Icon
             name="ios-return-left"
             type="ionicon"
@@ -43,7 +43,7 @@ export default class Toolbar extends Component {
             underlayColor={'#000080'}
           />
         </TouchableOpacity>
-        <TouchableOpacity style={{ padding: 20 }} onPress={back}>
+        <TouchableOpacity style={{ padding: 20 }} onPress={changeToEraser}>
           <Icon
             name="eraser"
             type="font-awesome"
@@ -52,7 +52,7 @@ export default class Toolbar extends Component {
             underlayColor={'#000080'}
           />
         </TouchableOpacity>
-        <TouchableOpacity style={{ padding: 20 }} onPress={back}>
+        <TouchableOpacity style={{ padding: 20 }} onPress={clear}>
           <Icon
             name="ios-trash"
             type="ionicon"
@@ -62,7 +62,7 @@ export default class Toolbar extends Component {
           />
         </TouchableOpacity>
         {colors.map((color, index) => (
-          <Button
+          <TouchableOpacity
             style={[styles.circle, { backgroundColor: color }]}
             key={index}
             type="clear"
