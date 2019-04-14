@@ -9,6 +9,7 @@ export default class Toolbar extends Component {
       changeWidth,
       undo,
       changeToEraser,
+      clear,
       drawWidth,
       eraseWidth,
       inDrawingMode
@@ -43,6 +44,13 @@ export default class Toolbar extends Component {
           type="font-awesome"
           color="#517fa4"
           onPress={changeToEraser}
+          underlayColor={'#000080'}
+        />
+        <Icon
+          name="ios-trash"
+          type="ionicon"
+          color="#517fa4"
+          onPress={clear}
           underlayColor={'#000080'}
         />
         {colors.map((color, index) => (

@@ -2,60 +2,49 @@ import React, { Component } from 'react';
 import { StyleSheet, View, Text } from 'react-native';
 import { SketchCanvas } from '@terrylinla/react-native-sketch-canvas';
 import Toolbar from './Toolbar';
-// import openSocket from 'socket.io-client';
+import { subscribeToCanvas, addPathToCanvas, clearAll, undoPath } from './api';
 
 export default class Canvas extends Component {
   constructor(props) {
     super(props);
     this.canvas = React.createRef();
-    this.addPath = this.addPath.bind(this);
     this.changeColor = this.changeColor.bind(this);
     this.changeWidth = this.changeWidth.bind(this);
     this.undo = this.undo.bind(this);
     this.changeToEraser = this.changeToEraser.bind(this);
-    //this.socket = openSocket('http://localhost:3000');
-    //this.setupSocket();
+    this.clear = this.clear.bind(this);
     this.state = {
       color: 'black',
       drawWidth: 7,
       eraseWidth: 50,
       inDrawingMode: true
     };
-
-    // if (this.props.data) {
-    //   this.canvas.current.addPath();
-    // }
   }
 
   componentDidMount() {
-    // make call thru socketio
-    // addpaths
-    // if (this.props.data) {
-    //   this.props.data.forEach(path => {
-    //     this.canvas.current.addPath(path);
-    //   });
-    // }
+    subscribeToCanvas(paths => {
+      paths.forEach(path => this.canvas.current.addPath(path));
+    });
   }
 
   render() {
     const { color, inDrawingMode, drawWidth, eraseWidth } = this.state;
     return (
       <View style={styles.container}>
-        <View style={{ flex: 15, flexDirection: 'row' }}>
-          <SketchCanvas
-            style={{ flex: 1 }}
-            strokeColor={color}
-            strokeWidth={inDrawingMode ? drawWidth : eraseWidth}
-            onStrokeEnd={this.addPath}
-            ref={this.canvas}
-          />
-        </View>
+        <SketchCanvas
+          style={{ flex: 15 }}
+          strokeColor={color}
+          strokeWidth={inDrawingMode ? drawWidth : eraseWidth}
+          onStrokeEnd={addPathToCanvas}
+          ref={this.canvas}
+        />
         <Toolbar
           inDrawingMode={inDrawingMode}
           drawWidth={drawWidth}
           eraseWidth={eraseWidth}
           changeToEraser={this.changeToEraser}
           undo={this.undo}
+          clear={this.clear}
           changeColor={this.changeColor}
           changeWidth={this.changeWidth}
         />
@@ -63,12 +52,16 @@ export default class Canvas extends Component {
     );
   }
 
-  setupSocket() {
-    this.socket;
+  clear() {
+    this.canvas.current.clear();
+    clearAll();
   }
 
   undo() {
-    this.canvas.current.undo();
+    const id = this.canvas.current.undo();
+    if (id != -1) {
+      undoPath(id);
+    }
   }
 
   changeColor(color) {
@@ -83,15 +76,9 @@ export default class Canvas extends Component {
   }
 
   changeWidth(newWidth) {
-    if (this.state.inDrawingMode) {
-      this.setState({ drawWidth: newWidth });
-    } else {
-      this.setState({ eraseWidth: newWidth });
-    }
-  }
-
-  addPath(path) {
-    console.log(path);
+    this.state.inDrawingMode
+      ? this.setState({ drawWidth: newWidth })
+      : this.setState({ eraseWidth: newWidth });
   }
 }
 
