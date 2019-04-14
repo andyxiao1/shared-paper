@@ -1,6 +1,7 @@
 import openSocket from 'socket.io-client';
-const socket = openSocket('http://10.104.86.58:3000/');
+const socket = openSocket('http://shared-paper.herokuapp.com');
 // http://shared-paper.herokuapp.com
+// http://10.104.86.58:3000/
 
 const signUpDB = (username, password, cb) => {
   socket.emit('users/signup', username, password, cb);

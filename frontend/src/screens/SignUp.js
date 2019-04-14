@@ -7,7 +7,6 @@ import {
   Button,
   Text
 } from 'react-native-elements';
-import { onSignIn } from '../auth';
 import { signUpDB } from '../api';
 
 export default class SignUp extends React.Component {
@@ -54,7 +53,8 @@ export default class SignUp extends React.Component {
     const { username, password } = this.state;
     signUpDB(username, password, isSignedUp => {
       if (isSignedUp) {
-        onSignIn().then(() => this.props.navigation.navigate('FileManager'));
+        // onSignIn().then(() => this.props.navigation.navigate('FileManager'));
+        this.props.navigation.navigate('FileManager');
       } else {
         this.setState({ failedSignUp: true });
       }
