@@ -1,9 +1,14 @@
 import openSocket from 'socket.io-client';
 const socket = openSocket('http://10.104.86.58:3000/');
 
-const subscribeToCanvas = cb => {
+const getCanvas = cb => {
   socket.emit('paper/connection', 'andy', cb);
-  //socket.on('paper/update', )
+};
+
+const subscribeToCanvas = (addCb, deleteCb, clearCb) => {
+  socket.on('paper/add_path', addCb);
+  socket.on('paper/delete_path', deleteCb);
+  socket.on('paper/clear', clearCb);
 };
 
 const addPathToCanvas = path => {
@@ -18,4 +23,4 @@ const undoPath = id => {
   socket.emit('paper/delete_path', id);
 };
 
-export { subscribeToCanvas, addPathToCanvas, clearAll, undoPath };
+export { subscribeToCanvas, addPathToCanvas, clearAll, undoPath, getCanvas };
