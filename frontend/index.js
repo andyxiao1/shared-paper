@@ -1,8 +1,8 @@
 import { AppRegistry } from 'react-native';
-import Canvas from './src/Canvas';
+import App from './src/App';
 import { name as appName } from './app.json';
 
-AppRegistry.registerComponent(appName, () => Canvas);
+AppRegistry.registerComponent(appName, () => App);
 
 console.ignoredYellowBox = ['Remote debugger'];
 import { YellowBox } from 'react-native';

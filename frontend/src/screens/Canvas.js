@@ -1,14 +1,14 @@
 import React, { Component } from 'react';
 import { StyleSheet, View, Text } from 'react-native';
 import { SketchCanvas } from '@terrylinla/react-native-sketch-canvas';
-import Toolbar from './Toolbar';
+import Toolbar from '../components/Toolbar';
 import {
   subscribeToCanvas,
   addPathToCanvas,
   clearAll,
   undoPath,
   getCanvas
-} from './api';
+} from '../api';
 
 export default class Canvas extends Component {
   constructor(props) {
@@ -19,6 +19,7 @@ export default class Canvas extends Component {
     this.undo = this.undo.bind(this);
     this.changeToEraser = this.changeToEraser.bind(this);
     this.clear = this.clear.bind(this);
+    this.back = this.back.bind(this);
     this.state = {
       color: 'black',
       drawWidth: 7,
@@ -29,7 +30,9 @@ export default class Canvas extends Component {
 
   componentDidMount() {
     const { current } = this.canvas;
-    getCanvas(paths => {
+    const paperName = this.props.navigation.getParam('paperName', 'andy');
+    console.log(paperName);
+    getCanvas(paperName, paths => {
       paths.forEach(path => current.addPath(path));
     });
 
@@ -56,6 +59,7 @@ export default class Canvas extends Component {
           drawWidth={drawWidth}
           eraseWidth={eraseWidth}
           changeToEraser={this.changeToEraser}
+          back={this.back}
           undo={this.undo}
           clear={this.clear}
           changeColor={this.changeColor}
@@ -63,6 +67,10 @@ export default class Canvas extends Component {
         />
       </View>
     );
+  }
+
+  back() {
+    this.props.navigation.navigate('FileManager');
   }
 
   clear() {
