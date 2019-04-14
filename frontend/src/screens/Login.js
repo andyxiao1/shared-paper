@@ -7,7 +7,6 @@ import {
   Text,
   Button
 } from 'react-native-elements';
-import { onSignIn } from '../auth';
 import { loginDB } from '../api';
 
 export default class Login extends React.Component {
@@ -46,7 +45,8 @@ export default class Login extends React.Component {
     const { username, password } = this.state;
     loginDB(username, password, isLoggedIn => {
       if (isLoggedIn) {
-        onSignIn().then(() => this.props.navigation.navigate('FileManager'));
+        // onSignIn().then(() => this.props.navigation.navigate('FileManager'));
+        this.props.navigation.navigate('FileManager');
       } else {
         this.setState({ failedSignUp: true });
       }

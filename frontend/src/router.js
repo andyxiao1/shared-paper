@@ -8,7 +8,6 @@ import FileManager from './screens/FileManager';
 import SignedOut from './screens/SignedOut';
 import Login from './screens/Login';
 import SignUp from './screens/SignUp';
-import AuthLoadingScreen from './screens/AuthLoadingScreen';
 
 const AuthStack = createStackNavigator(
   {
@@ -47,11 +46,10 @@ const RootNavigator = createAppContainer(
     {
       Auth: AuthStack,
       Canvas,
-      FileManager,
-      AuthLoading: AuthLoadingScreen
+      FileManager
     },
     {
-      initialRouteName: 'AuthLoading'
+      initialRouteName: 'Auth'
     }
   )
 );

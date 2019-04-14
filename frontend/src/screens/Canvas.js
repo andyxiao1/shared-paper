@@ -48,7 +48,7 @@ export default class Canvas extends Component {
     return (
       <View style={styles.container}>
         <SketchCanvas
-          style={{ flex: 15 }}
+          style={{ flex: 12 }}
           strokeColor={color}
           strokeWidth={inDrawingMode ? drawWidth : eraseWidth}
           onStrokeEnd={addPathToCanvas}
