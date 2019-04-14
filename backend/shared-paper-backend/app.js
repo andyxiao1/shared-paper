@@ -18,7 +18,7 @@ MongoClient.connect(process.env.PORT || 3000, { useNewUrlParser: true })
     .then(client => {
 
         const db = client.db();
-        var collection;
+        const papers = db.collection('papers');
         
         io.on('connection', socket => {
             
@@ -27,39 +27,38 @@ MongoClient.connect(process.env.PORT || 3000, { useNewUrlParser: true })
             // Inital connection
             socket.on('paper/connection', (paperName, callback) => {
                 
-                collection = db.collection(paperName);
                 socket.join(paperName);
                 socket.paper = paperName;
 
-                // get all docunents
-                collection.find().toArray((err, array) => {
-                    
-                    if(err) {
-                        console.log(err);
-                    }
-
-                    callback(array);
-                });
+                // get all paths
+                papers.findOne({ name: socket.paper })
+                    .then(paper => {
+                        callback(paper.paths);
+                    });
 
             });
 
-            socket.on('paper/add_path', (path) => {
+            socket.on('paper/add_path', (pathObj) => {
                 
-                if(collection) {
-                    collection.updateOne(
-                        { 'path.id': path.id },
-                        { path: path },
-                        {
-                            upsert: true
-                        }
-                    )
-                    .then(res => {
-                        return collection.findOne({ 'path.id': path.id })
-                    }).then(res => {
-                        socket.emit('paper/update', res);   // emit the updated path
-                    });
-                }
+                papers.updateOne(
+                    { 
+                        'name': socket.paper,
+                        'paths.path.id': pathObj.path.id
+                    },
+                    { $set: { 'pathObj.path': pathObj.path }},
+                    { upsert: true }    // insert if not exists
+                ).then(res => {
+                    return papers.findOne({ 
+                        'name': socket.paper,
+                        'paths.path.id': pathObj.path.id 
+                    })
+                }).then(res => {
+                    socket.emit('paper/update', res);   // emit the updated path
+                });
+            });
 
+            socket.on('paper/clear', () => {
+                io.to(socket.paper).emit('paper/clear');
             });
 
         });
