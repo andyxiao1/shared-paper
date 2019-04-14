@@ -1,8 +1,10 @@
+const bcrypt = require('bcrypt');
 require('dotenv').config();
 var http = require('http');
 var express = require('express');
 var path = require('path');
 var app = express();
+const saltRounds = bcrypt.genSaltSync(10);
 
 const port = process.env.PORT || 3000;
 
@@ -16,7 +18,7 @@ const MongoClient = require('mongodb').MongoClient;
 
 // Will 404 if you try to access using HTTP
 app.get('*', (req, res) => {
-    res.json(paths_arr);
+    res.send('i am so tired');
 });
 
 // Connect to MongoDB database
@@ -41,7 +43,7 @@ MongoClient.connect(process.env.MONGO_URI, { useNewUrlParser: true })
 
                 var username = 'andy';
 
-                if(socket.username) { username = socket.username; }
+                if(socket.user) { username = socket.user; }
                 
                 users.updateOne(
                     { name: username, papers: { $nin: [ paperName ] } },
@@ -91,7 +93,9 @@ MongoClient.connect(process.env.MONGO_URI, { useNewUrlParser: true })
                 socket.to(socket.paper).emit('paper/clear');
             });
 
-            socket.on('users/get_papers', (username, callback) => {
+            socket.on('users/get_papers', (callback) => {
+
+                var username = socket.user || 'andy';
                 
                 users.findOne({ name: username })
                     .then(user => {
@@ -110,25 +114,58 @@ MongoClient.connect(process.env.MONGO_URI, { useNewUrlParser: true })
 
             });
 
-            socket.on('users/signup' , (username, password) => {
+            socket.on('users/signup' , (username, password, callback) => {
 
-                db.createUser(
-                   {
-                       user: username,
-                       pwd: password,
-                       roles: []
-                    }
-                 );
+                users.findOne({ name: username })
+                    .then(user => {
+                        if(!user) {
+
+                            console.log('inserting ');
+
+                            var hashed = bcrypt.hashSync(password, saltRounds);
+
+                            users.insertOne({
+                                name: username,
+                                password: hashed,
+                                papers: []
+                            });
+
+                            socket.user = username
+
+                            callback(true);
+                        } else {
+                            callback(false);
+                        } 
+                    })
+                    .catch(err => {
+                        console.log(err);
+                    });
+                
             })
 
             socket.on('users/login' , (username, password, callback) => {
 
-                var success = db.auth({user: username, pwd: password})
-                callback(success);  // notify client if login was successful or not
+                users.findOne({ name: username })
+                    .then(user => {
 
-                if(success) {
-                    socket.user = username;
-                }
+                        if(user) {
+
+                            var result = bcrypt.compareSync(password, user.password);
+                            callback(result); //true or false
+
+                            if(result) {
+                                socket.user = username
+                            }else {
+                                console.log("no pt 2");
+                            }
+                        } else {
+                            console.log("no");
+                            callback(false);
+                        }
+                    })
+                    .catch(err => {
+                        console.log(err);
+                    });
             })
         });
 
@@ -136,9 +173,5 @@ MongoClient.connect(process.env.MONGO_URI, { useNewUrlParser: true })
     .catch(err => {
         console.log(err);
     });
-
-
-
-
 
 module.exports = app;
