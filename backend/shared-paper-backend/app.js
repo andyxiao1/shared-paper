@@ -33,12 +33,18 @@ MongoClient.connect(process.env.MONGO_URI, { useNewUrlParser: true })
 
             // Inital connection
             socket.on('paper/connection', (paperName, callback) => {
+
+                console.log('Connecting to ' + paperName);
                 
                 socket.join(paperName);
                 socket.paper = paperName;
 
+                var username = 'andy';
+
+                if(socket.username) { username = socket.username; }
+                
                 users.updateOne(
-                    { name: socket.username, papers: { $nin: [ paperName ] } },
+                    { name: username, papers: { $nin: [ paperName ] } },
                     { $push: { papers: paperName } }
                 );
 
@@ -77,8 +83,6 @@ MongoClient.connect(process.env.MONGO_URI, { useNewUrlParser: true })
 
             socket.on('paper/clear', () => {
 
-                console.log("clear");
-
                 papers.updateOne(
                     { 'name': socket.paper },
                     { '$set': { 'paths': [] }}
@@ -93,6 +97,17 @@ MongoClient.connect(process.env.MONGO_URI, { useNewUrlParser: true })
                     .then(user => {
                         callback(user.papers);
                     });
+            });
+
+            socket.on('users/delete_paper', (paperName) => {
+
+                var username = socket.user || 'andy';
+
+                users.updateOne(
+                    { name: username },
+                    { $pull: { papers: paperName } }
+                );
+
             });
 
             socket.on('users/signup' , (username, password) => {
