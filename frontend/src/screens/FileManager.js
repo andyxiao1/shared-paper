@@ -10,6 +10,7 @@ import {
 import { Icon } from 'react-native-elements';
 import DialogInput from 'react-native-dialog-input';
 import { getPapers, removeCanvas } from '../api';
+import { onSignOut } from '../auth';
 
 export default class CanvasIndex extends React.Component {
   constructor(props) {
@@ -29,6 +30,10 @@ export default class CanvasIndex extends React.Component {
   }
 
   FlatListItemSeparator = () => <View style={styles.line} />;
+
+  signOut() {
+    onSignOut().then(() => this.props.navigation.navigate('Auth'));
+  }
 
   renderItem = paper => (
     <TouchableOpacity
@@ -71,14 +76,20 @@ export default class CanvasIndex extends React.Component {
           <Icon
             reverse
             raised
+            name="ios-log-out"
+            type="ionicon"
+            color="#517fa4"
+            size={30}
+            onPress={() => this.signOut()}
+          />
+          <Icon
+            reverse
+            raised
             name="ios-remove"
             type="ionicon"
             color="#517fa4"
             size={30}
             onPress={() => this.setState({ isRemoveVisible: true })}
-            containerStyle={{
-              backgroundColor: '#192338'
-            }}
           />
           <Icon
             reverse
@@ -88,9 +99,6 @@ export default class CanvasIndex extends React.Component {
             color="#517fa4"
             size={30}
             onPress={() => this.setState({ isAddVisible: true })}
-            containerStyle={{
-              backgroundColor: '#192338'
-            }}
           />
         </View>
         <DialogInput
@@ -99,6 +107,9 @@ export default class CanvasIndex extends React.Component {
           hintInput={'Paper Name'}
           submitInput={inputText => {
             removeCanvas(inputText);
+            getPapers(papers => {
+              this.setState({ papers });
+            });
             this.showDialog();
           }}
           closeDialog={() => {
@@ -110,7 +121,7 @@ export default class CanvasIndex extends React.Component {
           title={'Create/Join Paper'}
           hintInput={'Paper Name'}
           submitInput={inputText => {
-            this.sendInput(inputText);
+            this.addPaper(inputText);
             this.showDialog();
           }}
           closeDialog={() => {
