@@ -9,3 +9,6 @@ An app that allows multiple users on different devices to simultaneously take no
 **Technologies:** React Native, Node/Express, MongoDB, Socket.io
 
 ![See it in use](/media/part1.mp4)
+![See it in use](/media/part2.mp4)
+![See it in use](/media/part3.mp4)
+![See it in use](/media/part4.mp4)
